@@ -1,0 +1,40 @@
+name: CleanPulse
+version: '1.0.0'
+main: com.tuservidor.cleanpulse.CleanPulse
+api-version: '1.21'
+author: Dafealru
+description: Next-Gen Adaptive Server Health & Entity Optimizer
+website: https://dr8553097-sudo.github.io
+
+commands:
+  cleanpulse:
+    description: Master command for CleanPulse
+    aliases: [cp, pulse]
+    permission: cleanpulse.admin
+  trash:
+    description: Open the interactive disposal trash GUI
+    aliases: [papelera, basurero]
+    permission: cleanpulse.trash
+
+permissions:
+  cleanpulse.*:
+    description: Full access to all CleanPulse features
+    default: op
+  cleanpulse.admin:
+    description: Admin commands for CleanPulse
+    default: op
+  cleanpulse.pulse:
+    description: Trigger manual and emergency cleanup pulses
+    default: op
+  cleanpulse.inspect:
+    description: Use the visual lag inspector with particle heatmaps
+    default: op
+  cleanpulse.monitor:
+    description: View live server health and diagnostics
+    default: op
+  cleanpulse.filter:
+    description: Use personal auto-mining item filter
+    default: true
+  cleanpulse.trash:
+    description: Open trash disposal GUI
+    default: true

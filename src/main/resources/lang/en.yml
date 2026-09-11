@@ -1,0 +1,42 @@
+prefix: '&#9d4edd&l⚡ &#c77dff&lClean&#e0aaff&lPulse &8» &7'
+
+pulse:
+  countdown-chat: '&#c77dff⚡ Automatic cleanup in &#e0aaff{seconds} seconds...'
+  countdown-actionbar: '&#9d4edd⚡ &#c77dffEntity cleanup in &#e0aaff&l{seconds}s'
+  cleared-broadcast: '&#00FF88✔ Optimized &#e0aaff{items} &#00FF88items and &#e0aaff{entities} &#00FF88entities in &#e0aaff{ms}ms&7.'
+  emergency-triggered: '&#ff4757⚠️ TPS drop detected ({tps}). Triggering emergency relief pulse!'
+  manual-triggered: '&#00F0FF⚡ Manual optimization pulse executed by &f{sender}&7.'
+
+death-shield:
+  player-protected: '&#00FF88🛡️ Your dropped death items are &#e0aaffprotected &#00FF88from cleanup for &f{time}&7.'
+  expired: '&#ff6b81⏱️ Your death item protection has expired.'
+
+inspector:
+  started: '&#00F0FF🔍 Visual lag inspection enabled for 15s. Heavy blocks and mobs will emit colored particles.'
+  stopped: '&#c77dff✔ Visual lag inspection ended.'
+  header: '&#9d4edd&m----------------------------------------'
+  title: '&#c77dff📊 Chunk Diagnostics &#e0aaff[{chunk_x}, {chunk_z}]'
+  hoppers: '&7• Active hoppers: &#e0aaff{hoppers} &7({status})'
+  entities: '&7• Living entities: &#e0aaff{entities} &7(AI Load: &#e0aaff{load}&7)'
+  items: '&7• Ground items: &#e0aaff{items}'
+  ms-cost: '&7• Estimated tick cost: &#00FF88{ms} ms/tick'
+  footer: '&#9d4edd&m----------------------------------------'
+
+redstone:
+  clock-frozen: '&#ff4757⚠️ Rapid redstone clock frozen for safety at &#e0aaff[{x}, {y}, {z}] &7({rate} pulses/s).'
+  minecart-limit: '&#ff4757🚫 Minecart density limit reached on this block.'
+
+trash:
+  opened: '&#c77dffPlace items you wish to destroy and click the confirmation bucket.'
+  cleared: '&#00FF88✔ Trash bin cleared safely.'
+
+monitor:
+  title: '&#9d4edd&l⚡ CleanPulse Performance Monitor'
+  tps: '&7• Current TPS: &#00FF88{tps} &7(Health: &#e0aaff{health}%&7)'
+  ram: '&7• Memory RAM: &#e0aaff{used_ram}MB &7/ &#c77dff{max_ram}MB'
+  worlds: '&7• Loaded worlds: &#e0aaff{worlds}'
+  total-entities: '&7• Global entities: &#e0aaff{entities}'
+
+admin:
+  reloaded: '&#00FF88✔ CleanPulse reloaded successfully in &#e0aaff{ms}ms&7.'
+  no-permission: '&#ff4757✖ You do not have permission to execute this command.'

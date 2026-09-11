@@ -1,0 +1,51 @@
+# ==========================================================
+# CleanPulse - Next-Gen Server Health & Adaptive Optimizer
+# Author: Dafealru | Native Paper 1.21.x & Java 21
+# ==========================================================
+
+prefix: '&#9d4edd&l⚡ &#c77dff&lClean&#e0aaff&lPulse &8» &7'
+
+language:
+  default: es
+
+pulse-engine:
+  enabled: true
+  interval-seconds: 600
+  emergency-mode:
+    enabled: true
+    tps-threshold: 17.5
+    check-period-seconds: 15
+    cooldown-seconds: 120
+  announcements:
+    enabled: true
+    channels:
+      - ACTION_BAR
+      - CHAT
+    warning-seconds: [60, 30, 10, 5, 3, 2, 1]
+    sound:
+      enabled: true
+
+smart-sentinel:
+  death-grace-shield:
+    enabled: true
+    immunity-seconds: 300
+    notify-player-on-death: true
+  protected-items:
+    netherite-gear: true
+    diamond-gear: true
+    named-items: true
+    custom-lore: true
+    high-enchantments: true
+  protected-entities:
+    named-mobs: true
+    tamed-animals: true
+    villagers-with-trades: true
+    chest-boats-and-minecarts: true
+    armour-stands: true
+
+redstone-sentinel:
+  enabled: true
+  max-pulses-per-second: 12
+  freeze-duration-seconds: 60
+  notify-staff: true
+  max-minecarts-per-block: 5

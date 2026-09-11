@@ -1,0 +1,12 @@
+trash-gui:
+  title: '&#9d4edd&l🗑️ Papelera de Descarte'
+  rows: 4
+  confirm-slot: 35
+  confirm-item:
+    material: LAVA_BUCKET
+    name: '&#ff4757&lVACIAR PAPELERA'
+    lore:
+      - '&7Haz clic para destruir permanentemente'
+      - '&7todos los ítems colocados en este menú.'
+      - ''
+      - '&#ff6b81&l⚠️ ¡ESTA ACCIÓN ES IRREVERSIBLE!'
