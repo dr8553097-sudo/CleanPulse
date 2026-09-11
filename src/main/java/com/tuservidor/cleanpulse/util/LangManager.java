@@ -15,7 +15,7 @@ import java.util.Map;
 public class LangManager {
     private final JavaPlugin plugin;
     private final Map<String, FileConfiguration> languages = new HashMap<>();
-    private String defaultLang = "es";
+    private String defaultLang = "en";
 
     public LangManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -24,7 +24,7 @@ public class LangManager {
 
     public void reload() {
         languages.clear();
-        this.defaultLang = plugin.getConfig().getString("language.default", "es").toLowerCase(Locale.ROOT);
+        this.defaultLang = plugin.getConfig().getString("language.default", "en").toLowerCase(Locale.ROOT);
         File langFolder = new File(plugin.getDataFolder(), "lang");
         if (!langFolder.exists()) {
             langFolder.mkdirs();
@@ -87,3 +87,4 @@ public class LangManager {
         sender.sendMessage(prefix + msg);
     }
 }
+

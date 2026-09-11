@@ -1,4 +1,4 @@
-# ==========================================================
+﻿# ==========================================================
 # CleanPulse - Next-Gen Server Health & Adaptive Optimizer
 # Author: Dafealru | Native Paper 1.21.x & Java 21
 # ==========================================================
@@ -6,7 +6,7 @@
 prefix: '&#9d4edd&l⚡ &#c77dff&lClean&#e0aaff&lPulse &8» &7'
 
 language:
-  default: es
+  default: en
 
 pulse-engine:
   enabled: true
@@ -49,3 +49,4 @@ redstone-sentinel:
   freeze-duration-seconds: 60
   notify-staff: true
   max-minecarts-per-block: 5
+
