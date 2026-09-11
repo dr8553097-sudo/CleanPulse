@@ -1,6 +1,7 @@
 package com.tuservidor.cleanpulse.protection;
 
 import com.tuservidor.cleanpulse.CleanPulse;
+import org.bukkit.Location;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DeathShieldManager implements Listener {
     private final CleanPulse plugin;
     private final Map<UUID, Long> protectedItems = new ConcurrentHashMap<>();
+    private final Map<UUID, Location> lastDeathLocations = new ConcurrentHashMap<>();
 
     public DeathShieldManager(CleanPulse plugin) {
         this.plugin = plugin;
@@ -27,19 +29,22 @@ public class DeathShieldManager implements Listener {
         }
 
         Player player = event.getEntity();
+        Location loc = player.getLocation();
+        lastDeathLocations.put(player.getUniqueId(), loc);
+
         int immunitySec = plugin.getConfig().getInt("smart-sentinel.death-grace-shield.immunity-seconds", 300);
         long expiryTime = System.currentTimeMillis() + (immunitySec * 1000L);
 
         for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {
             if (stack != null && stack.getType() != org.bukkit.Material.AIR) {
-                Item dropped = player.getWorld().dropItem(player.getLocation(), stack);
+                Item dropped = player.getWorld().dropItem(loc, stack);
                 protectedItems.put(dropped.getUniqueId(), expiryTime);
             }
         }
         event.getDrops().clear();
 
         if (plugin.getConfig().getBoolean("smart-sentinel.death-grace-shield.notify-player-on-death", true)) {
-            String timeStr = (immunitySec / 60) + " minutos";
+            String timeStr = (immunitySec / 60) + "m";
             plugin.getLangManager().send(player, "death-shield.player-protected", Map.of("time", timeStr));
         }
     }
@@ -55,6 +60,10 @@ public class DeathShieldManager implements Listener {
             protectedItems.remove(item.getUniqueId());
             return false;
         }
+    }
+
+    public Location getLastDeathLocation(UUID playerUuid) {
+        return lastDeathLocations.get(playerUuid);
     }
 
     public void cleanExpired() {

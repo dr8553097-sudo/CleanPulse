@@ -1,4 +1,4 @@
-﻿# ==========================================================
+# ==========================================================
 # CleanPulse - Next-Gen Server Health & Adaptive Optimizer
 # Author: Dafealru | Native Paper 1.21.x & Java 21
 # ==========================================================
@@ -8,34 +8,53 @@ prefix: '&#9d4edd&l⚡ &#c77dff&lClean&#e0aaff&lPulse &8» &7'
 language:
   default: en
 
+# ----------------------------------------------------------
+# Adaptive Pulse Engine (Dynamic Smart Cleanup & Titles)
+# ----------------------------------------------------------
 pulse-engine:
   enabled: true
   interval-seconds: 600
+  
+  # Reactive Emergency Mode:
   emergency-mode:
     enabled: true
     tps-threshold: 17.5
     check-period-seconds: 15
     cooldown-seconds: 120
+
+  # On-Screen Titles & Broadcasts
   announcements:
     enabled: true
+    # Channels: ACTION_BAR, CHAT, TITLE, BOSSBAR
     channels:
+      - TITLE
       - ACTION_BAR
       - CHAT
-    warning-seconds: [60, 30, 10, 5, 3, 2, 1]
+    warning-seconds: [60, 30, 10, 5, 4, 3, 2, 1]
+    
+    # Sound configurations
     sound:
       enabled: true
+      countdown-sound: 'BLOCK_NOTE_BLOCK_PLING'
+      final-countdown-sound: 'BLOCK_NOTE_BLOCK_HARP'
+      finished-sound: 'ENTITY_PLAYER_LEVELUP'
 
+# ----------------------------------------------------------
+# Smart Sentinel & Protection Rules (Zero-Accident Guarantee)
+# ----------------------------------------------------------
 smart-sentinel:
   death-grace-shield:
     enabled: true
     immunity-seconds: 300
     notify-player-on-death: true
+
   protected-items:
     netherite-gear: true
     diamond-gear: true
     named-items: true
     custom-lore: true
     high-enchantments: true
+
   protected-entities:
     named-mobs: true
     tamed-animals: true
@@ -43,6 +62,30 @@ smart-sentinel:
     chest-boats-and-minecarts: true
     armour-stands: true
 
+# ----------------------------------------------------------
+# Live Entity Optimization (AI Sleeper & Hologram Merging)
+# ----------------------------------------------------------
+entity-optimizer:
+  # AI Sleeper: pauses pathfinding for mobs in 1x1 boxes/farms (70% CPU saving)
+  ai-sleeper:
+    enabled: true
+    density-threshold: 8
+  
+  # Hologram Item Merging: Combines identical ground items
+  item-merging:
+    enabled: true
+    radius: 3.5
+    custom-name-format: '&#9d4edd⚡ &#c77dff&lx{amount} &#e0aaff{item}'
+
+  # Projectile Purge
+  projectile-purge:
+    enabled: true
+    clean-grounded-arrows: true
+    clean-expired-wind-charges: true
+
+# ----------------------------------------------------------
+# Redstone & Lag Machine Sentinel
+# ----------------------------------------------------------
 redstone-sentinel:
   enabled: true
   max-pulses-per-second: 12
@@ -50,3 +93,14 @@ redstone-sentinel:
   notify-staff: true
   max-minecarts-per-block: 5
 
+# ----------------------------------------------------------
+# Native Discord Webhook Dispatcher
+# ----------------------------------------------------------
+discord:
+  enabled: false
+  webhook-url: ''
+  username: 'CleanPulse Monitor'
+  avatar-url: 'https://img.icons8.com/fluency/96/lightning-bolt.png'
+  alerts:
+    tps-drops: true
+    lag-machines-frozen: true

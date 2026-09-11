@@ -82,7 +82,7 @@ public class PulseManager {
     private void checkAnnouncements(int seconds) {
         List<Integer> warnings = plugin.getConfig().getIntegerList("pulse-engine.announcements.warning-seconds");
         if (warnings.isEmpty()) {
-            warnings = List.of(60, 30, 10, 5, 3, 2, 1);
+            warnings = List.of(60, 30, 10, 5, 4, 3, 2, 1);
         }
 
         if (warnings.contains(seconds)) {
@@ -90,15 +90,35 @@ public class PulseManager {
             String chatMsg = plugin.getLangManager().get("pulse.countdown-chat", Map.of("seconds", String.valueOf(seconds)));
             String actionBarMsg = plugin.getLangManager().get("pulse.countdown-actionbar", Map.of("seconds", String.valueOf(seconds)));
 
+            boolean enableSound = plugin.getConfig().getBoolean("pulse-engine.announcements.sound.enabled", true);
+
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (channels.contains("CHAT") && (seconds == 60 || seconds == 30 || seconds == 10)) {
+                // Chat
+                if (channels.contains("CHAT") && (seconds == 60 || seconds == 30)) {
                     player.sendMessage(chatMsg);
                 }
+
+                // Action Bar
                 if (channels.contains("ACTION_BAR")) {
                     player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(actionBarMsg));
                 }
-                if (seconds <= 5 && plugin.getConfig().getBoolean("pulse-engine.announcements.sound.enabled", true)) {
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.5f);
+
+                // On-Screen Titles
+                if (channels.contains("TITLE")) {
+                    if (seconds == 10 || seconds == 5) {
+                        String title = plugin.getLangManager().get("pulse.title-warning");
+                        String subtitle = plugin.getLangManager().get("pulse.subtitle-warning", Map.of("seconds", String.valueOf(seconds)));
+                        player.sendTitle(title, subtitle, 5, 20, 5);
+                        if (enableSound) player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.8f, 1.0f);
+                    } else if (seconds <= 4) {
+                        String title = plugin.getLangManager().get("pulse.title-countdown", Map.of("seconds", String.valueOf(seconds)));
+                        String subtitle = plugin.getLangManager().get("pulse.subtitle-countdown");
+                        player.sendTitle(title, subtitle, 0, 18, 2);
+                        
+                        // Rising Pitch Audio Curve: 1.2 -> 1.5 -> 1.8 -> 2.0
+                        float pitch = 1.0f + (5 - seconds) * 0.25f;
+                        if (enableSound) player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, pitch);
+                    }
                 }
             }
         }
@@ -141,9 +161,16 @@ public class PulseManager {
                 "ms", String.valueOf(duration)
         ));
 
+        String titleDone = plugin.getLangManager().get("pulse.title-finished");
+        String subDone = plugin.getLangManager().get("pulse.subtitle-finished", Map.of(
+                "items", String.valueOf(itemsCleared.get()),
+                "entities", String.valueOf(entitiesCleared.get())
+        ));
+
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(broadcast));
-            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6f, 1.8f);
+            p.sendTitle(titleDone, subDone, 5, 35, 10);
+            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.7f, 1.8f);
         }
 
         if (plugin.getDeathShieldManager() != null) {

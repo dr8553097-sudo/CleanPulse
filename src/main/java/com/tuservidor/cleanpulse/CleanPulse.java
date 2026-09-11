@@ -5,6 +5,8 @@ import com.tuservidor.cleanpulse.commands.CleanPulseTabCompleter;
 import com.tuservidor.cleanpulse.commands.TrashCommand;
 import com.tuservidor.cleanpulse.engine.PulseManager;
 import com.tuservidor.cleanpulse.engine.SmartFilter;
+import com.tuservidor.cleanpulse.filter.MiningFilterManager;
+import com.tuservidor.cleanpulse.gui.PerformanceGui;
 import com.tuservidor.cleanpulse.inspector.LagInspectorManager;
 import com.tuservidor.cleanpulse.player.TrashMenu;
 import com.tuservidor.cleanpulse.protection.DeathShieldManager;
@@ -26,6 +28,8 @@ public final class CleanPulse extends JavaPlugin {
     private LagInspectorManager lagInspectorManager;
     private RedstoneSentinelListener redstoneSentinel;
     private TrashMenu trashMenu;
+    private MiningFilterManager miningFilterManager;
+    private PerformanceGui performanceGui;
     private FileConfiguration uiConfig;
     private File uiFile;
 
@@ -48,10 +52,14 @@ public final class CleanPulse extends JavaPlugin {
         this.lagInspectorManager = new LagInspectorManager(this);
         this.redstoneSentinel = new RedstoneSentinelListener(this);
         this.trashMenu = new TrashMenu(this);
+        this.miningFilterManager = new MiningFilterManager(this);
+        this.performanceGui = new PerformanceGui(this);
 
         Bukkit.getPluginManager().registerEvents(deathShieldManager, this);
         Bukkit.getPluginManager().registerEvents(redstoneSentinel, this);
         Bukkit.getPluginManager().registerEvents(trashMenu, this);
+        Bukkit.getPluginManager().registerEvents(miningFilterManager, this);
+        Bukkit.getPluginManager().registerEvents(performanceGui, this);
 
         if (getCommand("cleanpulse") != null) {
             getCommand("cleanpulse").setExecutor(new CleanPulseCommand(this));
@@ -121,5 +129,13 @@ public final class CleanPulse extends JavaPlugin {
 
     public TrashMenu getTrashMenu() {
         return trashMenu;
+    }
+
+    public MiningFilterManager getMiningFilterManager() {
+        return miningFilterManager;
+    }
+
+    public PerformanceGui getPerformanceGui() {
+        return performanceGui;
     }
 }

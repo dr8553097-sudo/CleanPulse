@@ -1,19 +1,26 @@
 prefix: '&#9d4edd&l⚡ &#c77dff&lClean&#e0aaff&lPulse &8» &7'
 
 pulse:
-  countdown-chat: '&#c77dff⚡ Automatic cleanup in &#e0aaff{seconds} seconds...'
+  countdown-chat: '&#c77dff⚡ Entity cleanup scheduled in &#e0aaff{seconds} seconds...'
   countdown-actionbar: '&#9d4edd⚡ &#c77dffEntity cleanup in &#e0aaff&l{seconds}s'
-  cleared-broadcast: '&#00FF88✔ Optimized &#e0aaff{items} &#00FF88items and &#e0aaff{entities} &#00FF88entities in &#e0aaff{ms}ms&7.'
-  emergency-triggered: '&#ff4757⚠️ TPS drop detected ({tps}). Triggering emergency relief pulse!'
+  title-warning: '&#9d4edd⚡ &#c77dffCleanPulse'
+  subtitle-warning: '&#e0aaffCleanup in &f{seconds}s'
+  title-countdown: '&#e0aaff&l{seconds}'
+  subtitle-countdown: '&#7Optimizing server entities...'
+  title-finished: '&#00FF88✔ &#e0aaffOPTIMIZED'
+  subtitle-finished: '&#a{items} items & {entities} entities cleaned'
+  cleared-broadcast: '&#00FF88✔ CleanPulse optimized &#e0aaff{items} &#00FF88items and &#e0aaff{entities} &#00FF88entities in &#e0aaff{ms}ms&7.'
+  emergency-triggered: '&#ff4757⚠️ Critical TPS drop ({tps}). Emergency relief pulse activated!'
   manual-triggered: '&#00F0FF⚡ Manual optimization pulse executed by &f{sender}&7.'
 
 death-shield:
   player-protected: '&#00FF88🛡️ Your dropped death items are &#e0aaffprotected &#00FF88from cleanup for &f{time}&7.'
-  expired: '&#ff6b81⏱️ Your death item protection has expired.'
+  location: '&#c77dffDeath coordinates: &#e0aaffX: {x}, Y: {y}, Z: {z} &7(Shield: &f{time}&7 left).'
+  no-death: '&#ff6b81✖ No recent death records found.'
 
 inspector:
-  started: '&#00F0FF🔍 Visual lag inspection enabled for 15s. Heavy blocks and mobs will emit colored particles.'
-  stopped: '&#c77dff✔ Visual lag inspection ended.'
+  started: '&#00F0FF🔍 Visual lag inspector active (15s). Heavy hoppers emit flame rings, dense mobs emit green rings.'
+  stopped: '&#c77dff✔ Visual lag inspection completed.'
   header: '&#9d4edd&m----------------------------------------'
   title: '&#c77dff📊 Chunk Diagnostics &#e0aaff[{chunk_x}, {chunk_z}]'
   hoppers: '&7• Active hoppers: &#e0aaff{hoppers} &7({status})'
@@ -27,8 +34,13 @@ redstone:
   minecart-limit: '&#ff4757🚫 Minecart density limit reached on this block.'
 
 trash:
-  opened: '&#c77dffPlace items you wish to destroy and click the confirmation bucket.'
+  opened: '&#c77dffPlace junk items to destroy and click the confirmation bucket.'
   cleared: '&#00FF88✔ Trash bin cleared safely.'
+
+filter:
+  opened: '&#c77dffClick any block to toggle whether you auto-void it while mining.'
+  toggle-on: '&#00FF88✔ Filter for &#e0aaff{material} &#00FF88ACTIVATED. You will not pick it up.'
+  toggle-off: '&#ff6b81✖ Filter for &#e0aaff{material} &#ff6b81DEACTIVATED.'
 
 monitor:
   title: '&#9d4edd&l⚡ CleanPulse Performance Monitor'

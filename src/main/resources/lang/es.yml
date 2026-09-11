@@ -3,16 +3,23 @@ prefix: '&#9d4edd&l⚡ &#c77dff&lClean&#e0aaff&lPulse &8» &7'
 pulse:
   countdown-chat: '&#c77dff⚡ Limpieza automática en &#e0aaff{seconds} segundos...'
   countdown-actionbar: '&#9d4edd⚡ &#c77dffLimpieza de entidades en &#e0aaff&l{seconds}s'
-  cleared-broadcast: '&#00FF88✔ Se han optimizado &#e0aaff{items} &#00FF88ítems y &#e0aaff{entities} &#00FF88entidades en &#e0aaff{ms}ms&7.'
-  emergency-triggered: '&#ff4757⚠️ Caída de TPS detectada ({tps}). ¡Activando pulso de alivio de emergencia!'
+  title-warning: '&#9d4edd⚡ &#c77dffCleanPulse'
+  subtitle-warning: '&#e0aaffLimpieza en &f{seconds}s'
+  title-countdown: '&#e0aaff&l{seconds}'
+  subtitle-countdown: '&#7Optimizando entidades...'
+  title-finished: '&#00FF88✔ &#e0aaffOPTIMIZADO'
+  subtitle-finished: '&#a{items} ítems y {entities} entidades limpiadas'
+  cleared-broadcast: '&#00FF88✔ CleanPulse ha optimizado &#e0aaff{items} &#00FF88ítems y &#e0aaff{entities} &#00FF88entidades en &#e0aaff{ms}ms&7.'
+  emergency-triggered: '&#ff4757⚠️ Caída crítica de TPS ({tps}). ¡Activando pulso de emergencia!'
   manual-triggered: '&#00F0FF⚡ Pulso de optimización manual ejecutado por &f{sender}&7.'
 
 death-shield:
-  player-protected: '&#00FF88🛡️ Tus ítems caídos están &#e0aaffprotegidos &#00FF88contra la limpieza automática durante &f{time}&7.'
-  expired: '&#ff6b81⏱️ La protección de tus ítems de muerte ha expirado.'
+  player-protected: '&#00FF88🛡️ Tus ítems caídos están &#e0aaffprotegidos &#00FF88contra la limpieza durante &f{time}&7.'
+  location: '&#c77dffCoordenadas de muerte: &#e0aaffX: {x}, Y: {y}, Z: {z} &7(Escudo: &f{time}&7 restante).'
+  no-death: '&#ff6b81✖ No se encontraron registros de muerte recientes.'
 
 inspector:
-  started: '&#00F0FF🔍 Inspección visual activada por 15 segundos. Las zonas con lag emitirán partículas de color.'
+  started: '&#00F0FF🔍 Inspector visual activado (15s). Tolvas pesadas emiten fuego, mobs densos emiten verde.'
   stopped: '&#c77dff✔ Inspección visual finalizada.'
   header: '&#9d4edd&m----------------------------------------'
   title: '&#c77dff📊 Diagnóstico del Chunk &#e0aaff[{chunk_x}, {chunk_z}]'
@@ -29,6 +36,11 @@ redstone:
 trash:
   opened: '&#c77dffColoca los ítems que quieras destruir y haz clic en el botón de confirmación.'
   cleared: '&#00FF88✔ Papelera vaciada correctamente.'
+
+filter:
+  opened: '&#c77dffHaz clic en cualquier bloque para elegir si evitar recogerlo al minar.'
+  toggle-on: '&#00FF88✔ Filtro para &#e0aaff{material} &#00FF88ACTIVADO. No lo recogerás del suelo.'
+  toggle-off: '&#ff6b81✖ Filtro para &#e0aaff{material} &#ff6b81DESACTIVADO.'
 
 monitor:
   title: '&#9d4edd&l⚡ CleanPulse Monitor de Rendimiento'

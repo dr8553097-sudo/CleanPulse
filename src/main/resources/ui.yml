@@ -1,12 +1,33 @@
 trash-gui:
-  title: '&#9d4edd&l🗑️ Papelera de Descarte'
+  title: '&#9d4edd&l🗑️ Disposal Trash Bin'
   rows: 4
   confirm-slot: 35
   confirm-item:
     material: LAVA_BUCKET
-    name: '&#ff4757&lVACIAR PAPELERA'
+    name: '&#ff4757&lEMPTY TRASH'
     lore:
-      - '&7Haz clic para destruir permanentemente'
-      - '&7todos los ítems colocados en este menú.'
+      - '&7Click to permanently destroy'
+      - '&7all items inside this menu.'
       - ''
-      - '&#ff6b81&l⚠️ ¡ESTA ACCIÓN ES IRREVERSIBLE!'
+      - '&#ff6b81&l⚠️ THIS CANNOT BE UNDONE!'
+
+filter-gui:
+  title: '&#9d4edd&l🧹 Auto-Mining Junk Filter'
+  rows: 4
+  materials:
+    - COBBLESTONE
+    - COBBLED_DEEPSLATE
+    - DIRT
+    - GRAVEL
+    - DIORITE
+    - ANDESITE
+    - GRANITE
+    - NETHERRACK
+    - TUFF
+    - BASALT
+    - SAND
+    - RED_SAND
+
+performance-gui:
+  title: '&#9d4edd&l⚡ CleanPulse Diagnostic Panel'
+  rows: 4

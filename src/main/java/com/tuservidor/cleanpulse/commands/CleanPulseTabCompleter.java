@@ -12,7 +12,7 @@ public class CleanPulseTabCompleter implements TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
             List<String> completions = new ArrayList<>();
-            List<String> subs = List.of("pulse", "inspect", "monitor", "reload");
+            List<String> subs = List.of("pulse", "inspect", "gui", "filter", "death", "monitor", "reload");
             for (String sub : subs) {
                 if (sub.startsWith(args[0].toLowerCase())) {
                     completions.add(sub);
