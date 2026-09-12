@@ -1,14 +1,14 @@
 package com.tuservidor.cleanpulse.commands;
 
 import com.tuservidor.cleanpulse.CleanPulse;
+import com.tuservidor.cleanpulse.gui.PerformanceGui;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
 public class CleanPulseCommand implements CommandExecutor {
     private final CleanPulse plugin;
@@ -18,107 +18,133 @@ public class CleanPulseCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
-            sender.sendMessage("§x§9§d§4§e§d§d§l⚡ §x§c§7§7§d§f§f§lClean§x§e§0§a§a§f§f§lPulse §7v" + plugin.getDescription().getVersion() + " por §fDafealru");
-            sender.sendMessage("§7• §d/cp pulse §8- §7Trigger manual optimization pulse");
-            sender.sendMessage("§7• §d/cp inspect §8- §7Toggle visual particle lag heatmap");
-            sender.sendMessage("§7• §d/cp gui §8- §7Open interactive performance dashboard");
-            sender.sendMessage("§7• §d/cp monitor §8- §7View live server TPS & RAM status");
-            sender.sendMessage("§7• §d/cp filter §8- §7Configure auto-mining junk filter");
-            sender.sendMessage("§7• §d/cp death §8- §7Locate protected death drop coords");
-            sender.sendMessage("§7• §d/trash §8- §7Open disposal trash bin GUI");
+            if (sender instanceof Player p && p.hasPermission("cleanpulse.admin")) {
+                new PerformanceGui(plugin).open(p);
+                return true;
+            }
+            sendHelp(sender);
             return true;
         }
 
         String sub = args[0].toLowerCase();
         switch (sub) {
-            case "pulse", "clear" -> {
-                if (!sender.hasPermission("cleanpulse.pulse")) {
-                    plugin.getLangManager().send(sender, "admin.no-permission");
-                    return true;
-                }
-                plugin.getPulseManager().executePulse(sender, false);
-                plugin.getLangManager().send(sender, "pulse.manual-triggered", Map.of("sender", sender.getName()));
-            }
-            case "inspect", "chunk" -> {
-                if (!(sender instanceof Player player)) {
-                    sender.sendMessage("§cOnly in-game players can use visual lag inspection.");
-                    return true;
-                }
-                if (!player.hasPermission("cleanpulse.inspect")) {
-                    plugin.getLangManager().send(player, "admin.no-permission");
-                    return true;
-                }
-                plugin.getLagInspectorManager().runInspect(player);
-            }
-            case "gui", "panel" -> {
-                if (!(sender instanceof Player player)) {
-                    sender.sendMessage("§cOnly in-game players can open the GUI dashboard.");
-                    return true;
-                }
-                if (!player.hasPermission("cleanpulse.monitor")) {
-                    plugin.getLangManager().send(player, "admin.no-permission");
-                    return true;
-                }
-                plugin.getPerformanceGui().open(player);
-            }
-            case "filter", "void" -> {
-                if (!(sender instanceof Player player)) {
-                    sender.sendMessage("§cOnly in-game players can use the auto-filter.");
-                    return true;
-                }
-                plugin.getMiningFilterManager().open(player);
-            }
-            case "death", "deathpoint" -> {
-                if (!(sender instanceof Player player)) {
-                    sender.sendMessage("§cOnly players can check death coordinates.");
-                    return true;
-                }
-                Location loc = plugin.getDeathShieldManager().getLastDeathLocation(player.getUniqueId());
-                if (loc != null) {
-                    plugin.getLangManager().send(player, "death-shield.location", Map.of(
-                            "x", String.valueOf(loc.getBlockX()),
-                            "y", String.valueOf(loc.getBlockY()),
-                            "z", String.valueOf(loc.getBlockZ()),
-                            "time", "5m"
-                    ));
-                } else {
-                    plugin.getLangManager().send(player, "death-shield.no-death");
-                }
-            }
-            case "monitor", "stats" -> {
-                if (!sender.hasPermission("cleanpulse.monitor")) {
-                    plugin.getLangManager().send(sender, "admin.no-permission");
-                    return true;
-                }
-                double[] tps = Bukkit.getTPS();
-                double currentTps = (tps != null && tps.length > 0) ? Math.min(20.0, tps[0]) : 20.0;
-                int health = (int) ((currentTps / 20.0) * 100);
-
-                Runtime r = Runtime.getRuntime();
-                long usedRam = (r.totalMemory() - r.freeMemory()) / 1048576L;
-                long maxRam = r.maxMemory() / 1048576L;
-                int totalEntities = Bukkit.getWorlds().stream().mapToInt(w -> w.getEntities().size()).sum();
-
-                sender.sendMessage(plugin.getLangManager().get("monitor.title"));
-                sender.sendMessage(plugin.getLangManager().get("monitor.tps", Map.of("tps", String.format("%.2f", currentTps), "health", String.valueOf(health))));
-                sender.sendMessage(plugin.getLangManager().get("monitor.ram", Map.of("used_ram", String.valueOf(usedRam), "max_ram", String.valueOf(maxRam))));
-                sender.sendMessage(plugin.getLangManager().get("monitor.worlds", Map.of("worlds", String.valueOf(Bukkit.getWorlds().size()))));
-                sender.sendMessage(plugin.getLangManager().get("monitor.total-entities", Map.of("entities", String.valueOf(totalEntities))));
-            }
-            case "reload" -> {
+            case "pulse":
                 if (!sender.hasPermission("cleanpulse.admin")) {
-                    plugin.getLangManager().send(sender, "admin.no-permission");
+                    sender.sendMessage(plugin.getLang().getComponent("commands.no-permission"));
                     return true;
                 }
-                long start = System.currentTimeMillis();
+                plugin.getPulseManager().executeOptimizationPulse(sender.getName());
+                break;
+
+            case "gui":
+                if (!(sender instanceof Player p)) {
+                    sender.sendMessage(plugin.getLang().getComponent("commands.only-players"));
+                    return true;
+                }
+                if (!p.hasPermission("cleanpulse.admin")) {
+                    p.sendMessage(plugin.getLang().getComponent("commands.no-permission"));
+                    return true;
+                }
+                new PerformanceGui(plugin).open(p);
+                break;
+
+            case "blame":
+            case "top":
+                if (!sender.hasPermission("cleanpulse.admin")) {
+                    sender.sendMessage(plugin.getLang().getComponent("commands.no-permission"));
+                    return true;
+                }
+                plugin.getBlameManager().executeBlame(sender);
+                break;
+
+            case "myfarm":
+            case "lagcheck":
+                if (!(sender instanceof Player p)) {
+                    sender.sendMessage(plugin.getLang().getComponent("commands.only-players"));
+                    return true;
+                }
+                plugin.getPlayerDiagnosticsManager().checkZone(p);
+                break;
+
+            case "restore":
+                if (!sender.hasPermission("cleanpulse.admin")) {
+                    sender.sendMessage(plugin.getLang().getComponent("commands.no-permission"));
+                    return true;
+                }
+                if (args.length > 1 && !args[1].equalsIgnoreCase("all")) {
+                    Player target = Bukkit.getPlayer(args[1]);
+                    if (target == null) {
+                        sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&cPlayer not found."));
+                        return true;
+                    }
+                    int r = plugin.getLagRecoveryManager().restorePlayer(target.getUniqueId());
+                    sender.sendMessage(plugin.getLang().getComponent(r > 0 ? "commands.restored-items" : "commands.restore-empty"));
+                } else {
+                    int r = plugin.getLagRecoveryManager().restoreAll();
+                    sender.sendMessage(plugin.getLang().getComponent(r > 0 ? "commands.restored-items" : "commands.restore-empty"));
+                }
+                break;
+
+            case "filter":
+                if (!(sender instanceof Player p)) {
+                    sender.sendMessage(plugin.getLang().getComponent("commands.only-players"));
+                    return true;
+                }
+                boolean state = plugin.getMiningFilterManager().toggleFilter(p);
+                String stateStr = state ? "&aENABLED" : "&cDISABLED";
+                p.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(
+                        plugin.getLang().getPrefixed("commands.filter-toggled").replace("{state}", stateStr)));
+                break;
+
+            case "death":
+                if (!(sender instanceof Player p)) {
+                    sender.sendMessage(plugin.getLang().getComponent("commands.only-players"));
+                    return true;
+                }
+                plugin.getDeathShieldManager().sendDeathShieldStatus(p);
+                break;
+
+            case "reload":
+                if (!sender.hasPermission("cleanpulse.admin")) {
+                    sender.sendMessage(plugin.getLang().getComponent("commands.no-permission"));
+                    return true;
+                }
                 plugin.reloadAll();
-                long duration = System.currentTimeMillis() - start;
-                plugin.getLangManager().send(sender, "admin.reloaded", Map.of("ms", String.valueOf(duration)));
-            }
-            default -> sender.sendMessage("§cUnknown subcommand. Use /cp for help.");
+                sender.sendMessage(plugin.getLang().getComponent("commands.reload-success"));
+                break;
+
+            case "lang":
+                if (!sender.hasPermission("cleanpulse.admin")) {
+                    sender.sendMessage(plugin.getLang().getComponent("commands.no-permission"));
+                    return true;
+                }
+                if (args.length < 2) {
+                    sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&eActive language: &d" + plugin.getLang().getActiveLang() + " &7(Usage: /cp lang <en|es|fr|pt>)"));
+                    return true;
+                }
+                plugin.getLang().setLanguage(args[1].toLowerCase());
+                sender.sendMessage(plugin.getLang().getComponent("commands.reload-success"));
+                break;
+
+            default:
+                sendHelp(sender);
+                break;
         }
         return true;
+    }
+
+    private void sendHelp(CommandSender sender) {
+        sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&8&m-----------------&r &d&lCleanPulse v2.0.0 &8&m-----------------"));
+        sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp gui &7- Open interactive control dashboard"));
+        sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp pulse &7- Instant zero-loss optimization pulse"));
+        sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp blame &7- Instant diagnostic of top lag hot-spots"));
+        sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp restore [player|all] &7- Restore items from recovery buffer"));
+        sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp myfarm &7- Check entity health of your current zone"));
+        sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp filter &7- Toggle auto-mining junk void filter"));
+        sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp death &7- Check your active death shield"));
+        sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp reload &7- Reload configuration & language"));
+        sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/trash &7- Open disposable trash bin"));
     }
 }

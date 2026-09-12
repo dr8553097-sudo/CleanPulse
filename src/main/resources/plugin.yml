@@ -1,40 +1,23 @@
 name: CleanPulse
-version: '1.0.0'
+version: 2.0.0
 main: com.tuservidor.cleanpulse.CleanPulse
 api-version: '1.21'
 author: Dafealru
-description: Next-Gen Adaptive Server Health & Entity Optimizer
-website: https://dr8553097-sudo.github.io
-
+description: The Ultimate Next-Gen Non-Destructive Server Optimizer & Anti-Lag Suite
 commands:
   cleanpulse:
-    description: Master command for CleanPulse
+    description: Main CleanPulse administrative & performance command
     aliases: [cp, pulse]
-    permission: cleanpulse.admin
   trash:
-    description: Open the interactive disposal trash GUI
-    aliases: [papelera, basurero]
-    permission: cleanpulse.trash
-
+    description: Open disposable trash bin GUI
+    aliases: [basura, bin]
 permissions:
-  cleanpulse.*:
-    description: Full access to all CleanPulse features
-    default: op
   cleanpulse.admin:
-    description: Admin commands for CleanPulse
+    description: Full administration access for CleanPulse
     default: op
-  cleanpulse.pulse:
-    description: Trigger manual and emergency cleanup pulses
-    default: op
-  cleanpulse.inspect:
-    description: Use the visual lag inspector with particle heatmaps
-    default: op
-  cleanpulse.monitor:
-    description: View live server health and diagnostics
-    default: op
-  cleanpulse.filter:
-    description: Use personal auto-mining item filter
+  cleanpulse.use:
+    description: Access to player-level commands like /cp filter, /cp death, /cp myfarm
     default: true
   cleanpulse.trash:
-    description: Open trash disposal GUI
+    description: Access to /trash command
     default: true

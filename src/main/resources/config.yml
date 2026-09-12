@@ -1,106 +1,160 @@
-# ==========================================================
-# CleanPulse - Next-Gen Server Health & Adaptive Optimizer
-# Author: Dafealru | Native Paper 1.21.x & Java 21
-# ==========================================================
+# =========================================================
+# CleanPulse v2.0.0 — Ultimate Server Optimizer & Anti-Lag
+# Developed with Next-Gen Intelligence by Dafealru
+# =========================================================
 
-prefix: '&#9d4edd&l⚡ &#c77dff&lClean&#e0aaff&lPulse &8» &7'
+# Language setting: en (English), es (Spanish), fr (French), pt (Portuguese)
+language: "en"
 
-language:
-  default: en
-
-# ----------------------------------------------------------
-# Adaptive Pulse Engine (Dynamic Smart Cleanup & Titles)
-# ----------------------------------------------------------
-pulse-engine:
-  enabled: true
-  interval-seconds: 600
-  
-  # Reactive Emergency Mode:
-  emergency-mode:
+# General Optimization Pulse Settings
+pulse:
+  auto-pulse:
     enabled: true
-    tps-threshold: 17.5
-    check-period-seconds: 15
-    cooldown-seconds: 120
-
-  # On-Screen Titles & Broadcasts
+    interval-seconds: 300
+    tps-threshold: 19.0
+    auto-trigger-on-low-tps: true
+  
   announcements:
-    enabled: true
-    # Channels: ACTION_BAR, CHAT, TITLE, BOSSBAR
-    channels:
-      - TITLE
-      - ACTION_BAR
-      - CHAT
-    warning-seconds: [60, 30, 10, 5, 4, 3, 2, 1]
-    
-    # Sound configurations
-    sound:
-      enabled: true
-      countdown-sound: 'BLOCK_NOTE_BLOCK_PLING'
-      final-countdown-sound: 'BLOCK_NOTE_BLOCK_HARP'
-      finished-sound: 'ENTITY_PLAYER_LEVELUP'
+    chat-broadcast: true
+    actionbar-warnings: true
+    title-warnings: true
+    countdown-seconds: [60, 30, 15, 10, 5, 4, 3, 2, 1]
+    sound-effects: true
 
-# ----------------------------------------------------------
-# Smart Sentinel & Protection Rules (Zero-Accident Guarantee)
-# ----------------------------------------------------------
-smart-sentinel:
-  death-grace-shield:
-    enabled: true
-    immunity-seconds: 300
-    notify-player-on-death: true
+# Zero-Loss Item Rarity Shield (Never lose valuables)
+rarity-shield:
+  enabled: true
+  # Items that will NEVER be purged under any circumstances
+  immune-materials:
+    - NETHERITE_SWORD
+    - NETHERITE_PICKAXE
+    - NETHERITE_AXE
+    - NETHERITE_SHOVEL
+    - NETHERITE_HOE
+    - NETHERITE_HELMET
+    - NETHERITE_CHESTPLATE
+    - NETHERITE_LEGGINGS
+    - NETHERITE_BOOTS
+    - NETHERITE_INGOT
+    - NETHERITE_UPGRADE_SMITHING_TEMPLATE
+    - DIAMOND_SWORD
+    - DIAMOND_PICKAXE
+    - DIAMOND_AXE
+    - DIAMOND_SHOVEL
+    - DIAMOND_HOE
+    - DIAMOND_HELMET
+    - DIAMOND_CHESTPLATE
+    - DIAMOND_LEGGINGS
+    - DIAMOND_BOOTS
+    - DIAMOND
+    - DIAMOND_BLOCK
+    - ELYTRA
+    - TOTEM_OF_UNDYING
+    - SHULKER_BOX
+    - WHITE_SHULKER_BOX
+    - BLACK_SHULKER_BOX
+    - BLUE_SHULKER_BOX
+    - RED_SHULKER_BOX
+    - GREEN_SHULKER_BOX
+    - PURPLE_SHULKER_BOX
+    - CYAN_SHULKER_BOX
+    - ORANGE_SHULKER_BOX
+    - YELLOW_SHULKER_BOX
+    - LIME_SHULKER_BOX
+    - PINK_SHULKER_BOX
+    - GRAY_SHULKER_BOX
+    - LIGHT_GRAY_SHULKER_BOX
+    - LIGHT_BLUE_SHULKER_BOX
+    - MAGENTA_SHULKER_BOX
+    - BROWN_SHULKER_BOX
+    - ENCHANTED_GOLDEN_APPLE
+    - BEACON
+    - TRIDENT
+    - ENCHANTED_BOOK
+  # Junk items purged with high priority
+  junk-materials:
+    - ARROW
+    - SPECTRAL_ARROW
+    - ROTTEN_FLESH
+    - COBBLESTONE
+    - DIRT
+    - NETHERRACK
+    - WHEAT_SEEDS
+    - BEETROOT_SEEDS
+    - MELON_SEEDS
+    - PUMPKIN_SEEDS
+    - POISONOUS_POTATO
+    - KELP
+    - FEATHER
+    - BONE
+    - STRING
+    - STICK
 
-  protected-items:
-    netherite-gear: true
-    diamond-gear: true
-    named-items: true
-    custom-lore: true
-    high-enchantments: true
+# Smart Mob Hibernation & Staggering
+mob-hibernation:
+  enabled: true
+  scan-interval-seconds: 10
+  density-threshold: 12
+  wake-radius: 8.0
+  protect-named-mobs: true
+  protect-tamed-mobs: true
+  protect-bosses: true
+  protect-villagers: true
 
-  protected-entities:
-    named-mobs: true
-    tamed-animals: true
-    villagers-with-trades: true
-    chest-boats-and-minecarts: true
-    armour-stands: true
+# Holographic Item Stacking
+item-stacker:
+  enabled: true
+  merge-radius: 4.0
+  display-hologram: true
+  hologram-format: "&d✦ &f[x{amount}] &b{name}"
 
-# ----------------------------------------------------------
-# Live Entity Optimization (AI Sleeper & Hologram Merging)
-# ----------------------------------------------------------
-entity-optimizer:
-  # AI Sleeper: pauses pathfinding for mobs in 1x1 boxes/farms (70% CPU saving)
-  ai-sleeper:
-    enabled: true
-    density-threshold: 8
-  
-  # Hologram Item Merging: Combines identical ground items
-  item-merging:
-    enabled: true
-    radius: 3.5
-    custom-name-format: '&#9d4edd⚡ &#c77dff&lx{amount} &#e0aaff{item}'
-
-  # Projectile Purge
-  projectile-purge:
-    enabled: true
-    clean-grounded-arrows: true
-    clean-expired-wind-charges: true
-
-# ----------------------------------------------------------
-# Redstone & Lag Machine Sentinel
-# ----------------------------------------------------------
+# Redstone Sentinel (Micro-Breaker for runaway clocks)
 redstone-sentinel:
   enabled: true
-  max-pulses-per-second: 12
-  freeze-duration-seconds: 60
-  notify-staff: true
-  max-minecarts-per-block: 5
+  max-frequency-hz: 14
+  auto-freeze: true
+  particle-cue: true
 
-# ----------------------------------------------------------
-# Native Discord Webhook Dispatcher
-# ----------------------------------------------------------
-discord:
-  enabled: false
-  webhook-url: ''
-  username: 'CleanPulse Monitor'
-  avatar-url: 'https://img.icons8.com/fluency/96/lightning-bolt.png'
-  alerts:
-    tps-drops: true
-    lag-machines-frozen: true
+# Dynamic Simulation Distance Scaler
+simulation-scaler:
+  enabled: true
+  check-interval-seconds: 30
+  base-distance: 10
+  min-distance: 4
+  scale-down-tps: 18.0
+  scale-up-tps: 19.8
+
+# Lag Undo / Recovery Buffer
+lag-recovery:
+  enabled: true
+  buffer-duration-minutes: 10
+  max-saved-items: 5000
+
+# Villager POI Optimizer
+villager-optimizer:
+  enabled: true
+  optimize-enclosed: true
+
+# Hopper Deep-Sleep Suppressor
+hopper-suppressor:
+  enabled: true
+  sleep-empty-ticks: 40
+
+# Death Grace Shield
+death-shield:
+  enabled: true
+  duration-seconds: 300
+  hologram-label: "&b🛡 &fDeath Shield &7({time}s)"
+
+# Auto-Mining Junk Filter
+mining-filter:
+  enabled: true
+  default-materials:
+    - COBBLESTONE
+    - COBBLED_DEEPSLATE
+    - NETHERRACK
+    - DIRT
+    - ANDESITE
+    - DIORITE
+    - GRANITE
+    - TUFF

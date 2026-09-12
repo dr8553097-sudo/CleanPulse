@@ -1,6 +1,7 @@
 package com.tuservidor.cleanpulse.protection;
 
 import com.tuservidor.cleanpulse.CleanPulse;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -8,6 +9,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.Map;
 import java.util.UUID;
@@ -15,59 +18,46 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DeathShieldManager implements Listener {
     private final CleanPulse plugin;
-    private final Map<UUID, Long> protectedItems = new ConcurrentHashMap<>();
-    private final Map<UUID, Location> lastDeathLocations = new ConcurrentHashMap<>();
+    private final Map<UUID, DeathRecord> deathRecords = new ConcurrentHashMap<>();
+
+    public record DeathRecord(Location location, long expiryTime) {}
 
     public DeathShieldManager(CleanPulse plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        if (!plugin.getConfig().getBoolean("smart-sentinel.death-grace-shield.enabled", true)) {
+    public void onDeath(PlayerDeathEvent e) {
+        if (!plugin.getConfig().getBoolean("death-shield.enabled", true)) return;
+        Player p = e.getEntity();
+        int durSeconds = plugin.getConfig().getInt("death-shield.duration-seconds", 300);
+        long expiry = System.currentTimeMillis() + (durSeconds * 1000L);
+
+        deathRecords.put(p.getUniqueId(), new DeathRecord(p.getLocation(), expiry));
+
+        for (ItemStack drop : e.getDrops()) {
+            if (drop == null || drop.getType().isAir()) continue;
+            Item item = p.getWorld().dropItemNaturally(p.getLocation(), drop);
+            item.setMetadata("cleanpulse_death_shield", new FixedMetadataValue(plugin, p.getUniqueId().toString()));
+        }
+        e.getDrops().clear();
+    }
+
+    public void sendDeathShieldStatus(Player player) {
+        DeathRecord record = deathRecords.get(player.getUniqueId());
+        if (record == null || System.currentTimeMillis() > record.expiryTime()) {
+            player.sendMessage(plugin.getLang().getComponent("commands.death-none"));
             return;
         }
 
-        Player player = event.getEntity();
-        Location loc = player.getLocation();
-        lastDeathLocations.put(player.getUniqueId(), loc);
+        long remainingSec = (record.expiryTime() - System.currentTimeMillis()) / 1000;
+        Location loc = record.location();
+        String msg = plugin.getLang().getPrefixed("commands.death-shield-info")
+                .replace("{x}", String.valueOf(loc.getBlockX()))
+                .replace("{y}", String.valueOf(loc.getBlockY()))
+                .replace("{z}", String.valueOf(loc.getBlockZ()))
+                .replace("{time}", String.valueOf(remainingSec));
 
-        int immunitySec = plugin.getConfig().getInt("smart-sentinel.death-grace-shield.immunity-seconds", 300);
-        long expiryTime = System.currentTimeMillis() + (immunitySec * 1000L);
-
-        for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {
-            if (stack != null && stack.getType() != org.bukkit.Material.AIR) {
-                Item dropped = player.getWorld().dropItem(loc, stack);
-                protectedItems.put(dropped.getUniqueId(), expiryTime);
-            }
-        }
-        event.getDrops().clear();
-
-        if (plugin.getConfig().getBoolean("smart-sentinel.death-grace-shield.notify-player-on-death", true)) {
-            String timeStr = (immunitySec / 60) + "m";
-            plugin.getLangManager().send(player, "death-shield.player-protected", Map.of("time", timeStr));
-        }
-    }
-
-    public boolean isProtected(Item item) {
-        if (item == null) return false;
-        Long expiry = protectedItems.get(item.getUniqueId());
-        if (expiry == null) return false;
-
-        if (System.currentTimeMillis() < expiry) {
-            return true;
-        } else {
-            protectedItems.remove(item.getUniqueId());
-            return false;
-        }
-    }
-
-    public Location getLastDeathLocation(UUID playerUuid) {
-        return lastDeathLocations.get(playerUuid);
-    }
-
-    public void cleanExpired() {
-        long now = System.currentTimeMillis();
-        protectedItems.entrySet().removeIf(entry -> now >= entry.getValue());
+        player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));
     }
 }

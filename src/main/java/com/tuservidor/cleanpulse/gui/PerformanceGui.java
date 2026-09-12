@@ -1,9 +1,12 @@
 package com.tuservidor.cleanpulse.gui;
 
 import com.tuservidor.cleanpulse.CleanPulse;
-import com.tuservidor.cleanpulse.util.ColorUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,92 +15,81 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PerformanceGui implements Listener {
     private final CleanPulse plugin;
-    private final String title;
 
     public PerformanceGui(CleanPulse plugin) {
         this.plugin = plugin;
-        this.title = ColorUtil.color(plugin.getUiConfig().getString("performance-gui.title", "&9⚡ CleanPulse Diagnostics"));
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     public void open(Player player) {
-        Inventory inv = Bukkit.createInventory(null, 36, title);
+        Inventory inv = Bukkit.createInventory(null, 27, LegacyComponentSerializer.legacyAmpersand().deserialize("&8[ &d&lCleanPulse &fDashboard &8]"));
 
-        double[] tps = Bukkit.getTPS();
-        double currentTps = (tps != null && tps.length > 0) ? Math.min(20.0, tps[0]) : 20.0;
-        int health = (int) ((currentTps / 20.0) * 100);
-
-        Runtime r = Runtime.getRuntime();
-        long usedRam = (r.totalMemory() - r.freeMemory()) / 1048576L;
-        long maxRam = r.maxMemory() / 1048576L;
-        int totalEntities = Bukkit.getWorlds().stream().mapToInt(w -> w.getEntities().size()).sum();
-
-        // Slot 11: TPS Gauge
-        ItemStack tpsItem = new ItemStack(currentTps > 18.0 ? Material.LIME_DYE : currentTps > 15.0 ? Material.YELLOW_DYE : Material.RED_DYE);
-        ItemMeta tpsMeta = tpsItem.getItemMeta();
-        if (tpsMeta != null) {
-            tpsMeta.setDisplayName(ColorUtil.color("&#00FF88&lTPS: &f" + String.format("%.2f", currentTps)));
-            tpsMeta.setLore(List.of(
-                    ColorUtil.color("&7Salud del servidor: &#e0aaff" + health + "%"),
-                    ColorUtil.color("&7Estado: " + (currentTps > 18.0 ? "&aÓPTIMO" : "&cBAJO CARGA"))
-            ));
-            tpsItem.setItemMeta(tpsMeta);
+        // Background filler
+        ItemStack filler = createItem(Material.BLACK_STAINED_GLASS_PANE, "&7 ");
+        for (int i = 0; i < 27; i++) {
+            inv.setItem(i, filler);
         }
-        inv.setItem(11, tpsItem);
 
-        // Slot 13: RAM Usage
-        ItemStack ramItem = new ItemStack(Material.HOPPER);
-        ItemMeta ramMeta = ramItem.getItemMeta();
-        if (ramMeta != null) {
-            ramMeta.setDisplayName(ColorUtil.color("&#c77dff&lMEMORIA RAM"));
-            ramMeta.setLore(List.of(
-                    ColorUtil.color("&7En uso: &#e0aaff" + usedRam + " MB"),
-                    ColorUtil.color("&7Asignada: &#c77dff" + maxRam + " MB")
-            ));
-            ramItem.setItemMeta(ramMeta);
-        }
-        inv.setItem(13, ramItem);
+        // TPS Gauge (Slot 11)
+        double tps = Bukkit.getTPS()[0];
+        Material tpsMat = tps >= 19.5 ? Material.LIME_CONCRETE : (tps >= 17.0 ? Material.YELLOW_CONCRETE : Material.RED_CONCRETE);
+        inv.setItem(11, createItem(tpsMat, "&a&lServer TPS: &f" + String.format("%.2f", tps),
+                "&7• Health: &d" + (tps >= 19.5 ? "99%" : "85%"),
+                "&7• Status: " + (tps >= 18.0 ? "&aStable" : "&cUnder Load")));
 
-        // Slot 15: Entities Diagnostic
-        ItemStack entItem = new ItemStack(Material.COMPASS);
-        ItemMeta entMeta = entItem.getItemMeta();
-        if (entMeta != null) {
-            entMeta.setDisplayName(ColorUtil.color("&#00F0FF&lENTIDADES"));
-            entMeta.setLore(List.of(
-                    ColorUtil.color("&7Entidades globales: &#e0aaff" + totalEntities),
-                    ColorUtil.color("&7Mundos cargados: &#e0aaff" + Bukkit.getWorlds().size())
-            ));
-            entItem.setItemMeta(entMeta);
-        }
-        inv.setItem(15, entItem);
+        // Memory RAM Gauge (Slot 13)
+        Runtime rt = Runtime.getRuntime();
+        long maxMem = rt.maxMemory() / 1048576L;
+        long usedMem = (rt.totalMemory() - rt.freeMemory()) / 1048576L;
+        inv.setItem(13, createItem(Material.END_CRYSTAL, "&d&lMemory RAM Usage",
+                "&7• Used: &e" + usedMem + " MB &7/ &e" + maxMem + " MB",
+                "&7• Free: &a" + (maxMem - usedMem) + " MB"));
 
-        // Slot 22: Force Optimization Pulse Button
-        ItemStack pulseBtn = new ItemStack(Material.NETHER_STAR);
-        ItemMeta pMeta = pulseBtn.getItemMeta();
-        if (pMeta != null) {
-            pMeta.setDisplayName(ColorUtil.color("&#9d4edd&l⚡ EJECUTAR PULSO MANUAL"));
-            pMeta.setLore(List.of(
-                    ColorUtil.color("&7Haz clic para forzar un pulso"),
-                    ColorUtil.color("&7de optimización inmediato.")
-            ));
-            pulseBtn.setItemMeta(pMeta);
-        }
-        inv.setItem(22, pulseBtn);
+        // Global Entities (Slot 15)
+        int entities = 0;
+        for (org.bukkit.World w : Bukkit.getWorlds()) entities += w.getEntities().size();
+        inv.setItem(15, createItem(Material.AMETHYST_CLUSTER, "&b&lEntity Density",
+                "&7• Global Entities: &e" + entities,
+                "&7• Loaded Worlds: &e" + Bukkit.getWorlds().size()));
+
+        // Quick Pulse Button (Slot 22)
+        inv.setItem(22, createItem(Material.NETHER_STAR, "&d&l⚡ Execute Instant Pulse",
+                "&7Click to immediately purge clutter",
+                "&7and optimize nearby entities."));
 
         player.openInventory(inv);
+        player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0f, 1.2f);
+    }
+
+    private ItemStack createItem(Material mat, String name, String... lore) {
+        ItemStack item = new ItemStack(mat);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.displayName(LegacyComponentSerializer.legacyAmpersand().deserialize(name));
+            List<Component> loreList = new ArrayList<>();
+            for (String l : lore) {
+                loreList.add(LegacyComponentSerializer.legacyAmpersand().deserialize(l));
+            }
+            meta.lore(loreList);
+            item.setItemMeta(meta);
+        }
+        return item;
     }
 
     @EventHandler
-    public void onClick(InventoryClickEvent event) {
-        if (!event.getView().getTitle().equals(title)) return;
-        event.setCancelled(true);
+    public void onClick(InventoryClickEvent e) {
+        if (!e.getView().title().equals(LegacyComponentSerializer.legacyAmpersand().deserialize("&8[ &d&lCleanPulse &fDashboard &8]"))) return;
+        e.setCancelled(true);
+        if (!(e.getWhoClicked() instanceof Player p)) return;
 
-        if (event.getRawSlot() == 22 && event.getWhoClicked() instanceof Player player) {
-            player.closeInventory();
-            plugin.getPulseManager().executePulse(player, false);
+        if (e.getRawSlot() == 22) {
+            p.closeInventory();
+            plugin.getPulseManager().executeOptimizationPulse(p.getName());
         }
     }
 }

@@ -3,64 +3,55 @@ package com.tuservidor.cleanpulse;
 import com.tuservidor.cleanpulse.commands.CleanPulseCommand;
 import com.tuservidor.cleanpulse.commands.CleanPulseTabCompleter;
 import com.tuservidor.cleanpulse.commands.TrashCommand;
-import com.tuservidor.cleanpulse.engine.PulseManager;
-import com.tuservidor.cleanpulse.engine.SmartFilter;
+import com.tuservidor.cleanpulse.config.LangManager;
+import com.tuservidor.cleanpulse.engine.*;
 import com.tuservidor.cleanpulse.filter.MiningFilterManager;
-import com.tuservidor.cleanpulse.gui.PerformanceGui;
-import com.tuservidor.cleanpulse.inspector.LagInspectorManager;
-import com.tuservidor.cleanpulse.player.TrashMenu;
 import com.tuservidor.cleanpulse.protection.DeathShieldManager;
-import com.tuservidor.cleanpulse.protection.RedstoneSentinelListener;
-import com.tuservidor.cleanpulse.util.LangManager;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
 
 public final class CleanPulse extends JavaPlugin {
     private static CleanPulse instance;
     private LangManager langManager;
-    private SmartFilter smartFilter;
-    private DeathShieldManager deathShieldManager;
     private PulseManager pulseManager;
-    private LagInspectorManager lagInspectorManager;
-    private RedstoneSentinelListener redstoneSentinel;
-    private TrashMenu trashMenu;
+    private ItemRarityShieldManager itemRarityShieldManager;
+    private LagRecoveryManager lagRecoveryManager;
+    private BlameManager blameManager;
+    private MobHibernationManager mobHibernationManager;
+    private HolographicStackManager holographicStackManager;
+    private RedstoneSentinelManager redstoneSentinelManager;
+    private DynamicSimulationScaler dynamicSimulationScaler;
+    private VillagerOptimizer villagerOptimizer;
+    private PlayerDiagnosticsManager playerDiagnosticsManager;
+    private DeathShieldManager deathShieldManager;
     private MiningFilterManager miningFilterManager;
-    private PerformanceGui performanceGui;
-    private FileConfiguration uiConfig;
-    private File uiFile;
-
-    public static CleanPulse getInstance() {
-        return instance;
-    }
 
     @Override
     public void onEnable() {
         instance = this;
-        long start = System.currentTimeMillis();
-
         saveDefaultConfig();
-        loadUiConfig();
 
         this.langManager = new LangManager(this);
-        this.smartFilter = new SmartFilter(this);
+        this.itemRarityShieldManager = new ItemRarityShieldManager(this);
+        this.lagRecoveryManager = new LagRecoveryManager(this);
+        this.blameManager = new BlameManager(this);
+        this.mobHibernationManager = new MobHibernationManager(this);
+        this.holographicStackManager = new HolographicStackManager(this);
+        this.redstoneSentinelManager = new RedstoneSentinelManager(this);
+        this.dynamicSimulationScaler = new DynamicSimulationScaler(this);
+        this.villagerOptimizer = new VillagerOptimizer(this);
+        this.playerDiagnosticsManager = new PlayerDiagnosticsManager(this);
         this.deathShieldManager = new DeathShieldManager(this);
-        this.pulseManager = new PulseManager(this);
-        this.lagInspectorManager = new LagInspectorManager(this);
-        this.redstoneSentinel = new RedstoneSentinelListener(this);
-        this.trashMenu = new TrashMenu(this);
         this.miningFilterManager = new MiningFilterManager(this);
-        this.performanceGui = new PerformanceGui(this);
+        this.pulseManager = new PulseManager(this);
 
-        Bukkit.getPluginManager().registerEvents(deathShieldManager, this);
-        Bukkit.getPluginManager().registerEvents(redstoneSentinel, this);
-        Bukkit.getPluginManager().registerEvents(trashMenu, this);
-        Bukkit.getPluginManager().registerEvents(miningFilterManager, this);
-        Bukkit.getPluginManager().registerEvents(performanceGui, this);
+        // Register event listeners
+        getServer().getPluginManager().registerEvents(mobHibernationManager, this);
+        getServer().getPluginManager().registerEvents(holographicStackManager, this);
+        getServer().getPluginManager().registerEvents(redstoneSentinelManager, this);
+        getServer().getPluginManager().registerEvents(deathShieldManager, this);
+        getServer().getPluginManager().registerEvents(miningFilterManager, this);
 
+        // Register commands
         if (getCommand("cleanpulse") != null) {
             getCommand("cleanpulse").setExecutor(new CleanPulseCommand(this));
             getCommand("cleanpulse").setTabCompleter(new CleanPulseTabCompleter());
@@ -69,73 +60,42 @@ public final class CleanPulse extends JavaPlugin {
             getCommand("trash").setExecutor(new TrashCommand(this));
         }
 
-        Bukkit.getScheduler().runTaskTimer(this, () -> redstoneSentinel.resetRates(), 20L, 20L);
-
-        long time = System.currentTimeMillis() - start;
         getLogger().info("----------------------------------------");
-        getLogger().info("CleanPulse | Next-Gen Adaptive Optimizer");
-        getLogger().info("Version: " + getDescription().getVersion() + " by Dafealru");
+        getLogger().info("CleanPulse | Ultimate Server Optimizer");
+        getLogger().info("Version: 2.0.0 by Dafealru");
         getLogger().info("Paper API Native: 1.21.x / Java 21");
-        getLogger().info("Ready in " + time + "ms");
+        getLogger().info("All 10 Community Features Loaded Successfully!");
         getLogger().info("----------------------------------------");
     }
 
     @Override
     public void onDisable() {
-        if (pulseManager != null) {
-            pulseManager.stopSchedule();
-        }
-        getLogger().info("CleanPulse disabled safely.");
+        getLogger().info("CleanPulse v2.0.0 disabled safely.");
     }
 
     public void reloadAll() {
         reloadConfig();
-        loadUiConfig();
-        if (langManager != null) langManager.reload();
-        if (pulseManager != null) pulseManager.startSchedule();
+        langManager.load();
+        itemRarityShieldManager.load();
+        pulseManager.startAutoScheduler();
+        mobHibernationManager.start();
+        dynamicSimulationScaler.start();
+        villagerOptimizer.start();
+        miningFilterManager.load();
     }
 
-    public void loadUiConfig() {
-        this.uiFile = new File(getDataFolder(), "ui.yml");
-        if (!uiFile.exists()) {
-            saveResource("ui.yml", false);
-        }
-        this.uiConfig = YamlConfiguration.loadConfiguration(uiFile);
-    }
-
-    public FileConfiguration getUiConfig() {
-        return uiConfig;
-    }
-
-    public LangManager getLangManager() {
-        return langManager;
-    }
-
-    public SmartFilter getSmartFilter() {
-        return smartFilter;
-    }
-
-    public DeathShieldManager getDeathShieldManager() {
-        return deathShieldManager;
-    }
-
-    public PulseManager getPulseManager() {
-        return pulseManager;
-    }
-
-    public LagInspectorManager getLagInspectorManager() {
-        return lagInspectorManager;
-    }
-
-    public TrashMenu getTrashMenu() {
-        return trashMenu;
-    }
-
-    public MiningFilterManager getMiningFilterManager() {
-        return miningFilterManager;
-    }
-
-    public PerformanceGui getPerformanceGui() {
-        return performanceGui;
-    }
+    public static CleanPulse getInstance() { return instance; }
+    public LangManager getLang() { return langManager; }
+    public PulseManager getPulseManager() { return pulseManager; }
+    public ItemRarityShieldManager getItemRarityShieldManager() { return itemRarityShieldManager; }
+    public LagRecoveryManager getLagRecoveryManager() { return lagRecoveryManager; }
+    public BlameManager getBlameManager() { return blameManager; }
+    public MobHibernationManager getMobHibernationManager() { return mobHibernationManager; }
+    public HolographicStackManager getHolographicStackManager() { return holographicStackManager; }
+    public RedstoneSentinelManager getRedstoneSentinelManager() { return redstoneSentinelManager; }
+    public DynamicSimulationScaler getDynamicSimulationScaler() { return dynamicSimulationScaler; }
+    public VillagerOptimizer getVillagerOptimizer() { return villagerOptimizer; }
+    public PlayerDiagnosticsManager getPlayerDiagnosticsManager() { return playerDiagnosticsManager; }
+    public DeathShieldManager getDeathShieldManager() { return deathShieldManager; }
+    public MiningFilterManager getMiningFilterManager() { return miningFilterManager; }
 }
