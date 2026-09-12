@@ -1,3 +1,4 @@
+[![Donate](https://img.shields.io/badge/Donate-PayPal-00457C?style=for-the-badge&logo=paypal)](https://paypal.me/DanielAlvarez45767)
 ﻿<div align="center">
 
 # ⚡ CleanPulse
