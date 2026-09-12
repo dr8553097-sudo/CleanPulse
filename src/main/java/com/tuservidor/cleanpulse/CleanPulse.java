@@ -24,6 +24,8 @@ public final class CleanPulse extends JavaPlugin {
     private PlayerDiagnosticsManager playerDiagnosticsManager;
     private DeathShieldManager deathShieldManager;
     private MiningFilterManager miningFilterManager;
+    private GameAIOptimizer gameAIOptimizer;
+    private AdvancedPerformanceMonitor advancedPerformanceMonitor;
 
     @Override
     public void onEnable() {
@@ -42,6 +44,8 @@ public final class CleanPulse extends JavaPlugin {
         this.playerDiagnosticsManager = new PlayerDiagnosticsManager(this);
         this.deathShieldManager = new DeathShieldManager(this);
         this.miningFilterManager = new MiningFilterManager(this);
+        this.gameAIOptimizer = new GameAIOptimizer(this);
+        this.advancedPerformanceMonitor = new AdvancedPerformanceMonitor(this);
         this.pulseManager = new PulseManager(this);
 
         // Register event listeners
@@ -50,6 +54,7 @@ public final class CleanPulse extends JavaPlugin {
         getServer().getPluginManager().registerEvents(redstoneSentinelManager, this);
         getServer().getPluginManager().registerEvents(deathShieldManager, this);
         getServer().getPluginManager().registerEvents(miningFilterManager, this);
+        getServer().getPluginManager().registerEvents(gameAIOptimizer, this);
 
         // Register commands
         if (getCommand("cleanpulse") != null) {
@@ -64,7 +69,7 @@ public final class CleanPulse extends JavaPlugin {
         getLogger().info("CleanPulse | Ultimate Server Optimizer");
         getLogger().info("Version: 2.0.0 by Dafealru");
         getLogger().info("Paper API Native: 1.21.x / Java 21");
-        getLogger().info("All 10 Community Features Loaded Successfully!");
+        getLogger().info("Advanced Root-Cause AI Monitor & Optimizer Active!");
         getLogger().info("----------------------------------------");
     }
 
@@ -82,6 +87,7 @@ public final class CleanPulse extends JavaPlugin {
         dynamicSimulationScaler.start();
         villagerOptimizer.start();
         miningFilterManager.load();
+        gameAIOptimizer.start();
     }
 
     public static CleanPulse getInstance() { return instance; }
@@ -98,4 +104,6 @@ public final class CleanPulse extends JavaPlugin {
     public PlayerDiagnosticsManager getPlayerDiagnosticsManager() { return playerDiagnosticsManager; }
     public DeathShieldManager getDeathShieldManager() { return deathShieldManager; }
     public MiningFilterManager getMiningFilterManager() { return miningFilterManager; }
+    public GameAIOptimizer getGameAIOptimizer() { return gameAIOptimizer; }
+    public AdvancedPerformanceMonitor getAdvancedPerformanceMonitor() { return advancedPerformanceMonitor; }
 }

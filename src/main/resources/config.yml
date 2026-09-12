@@ -18,6 +18,14 @@ pulse:
     title-warnings: true
     sound-effects: true
 
+# Next-Gen Game AI & Navigation Optimizer (Beyond Paper limits)
+ai-optimizer:
+  enabled: true
+  scan-interval-ticks: 100 # Scans every 5 seconds
+  throttle-stuck-pathfinders: true
+  throttle-animal-clusters: true
+  prune-villager-memory: true
+
 # Zero-Loss Item Rarity Shield (Never lose valuables)
 rarity-shield:
   enabled: true

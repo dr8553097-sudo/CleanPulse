@@ -30,6 +30,16 @@ public class CleanPulseCommand implements CommandExecutor {
 
         String sub = args[0].toLowerCase();
         switch (sub) {
+            case "monitor":
+            case "stats":
+            case "profile":
+                if (!sender.hasPermission("cleanpulse.admin")) {
+                    sender.sendMessage(plugin.getLang().getComponent("commands.no-permission"));
+                    return true;
+                }
+                plugin.getAdvancedPerformanceMonitor().displayDetailedReport(sender);
+                break;
+
             case "pulse":
                 if (!sender.hasPermission("cleanpulse.admin")) {
                     sender.sendMessage(plugin.getLang().getComponent("commands.no-permission"));
@@ -147,6 +157,7 @@ public class CleanPulseCommand implements CommandExecutor {
 
     private void sendHelp(CommandSender sender) {
         sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&8&m-----------------&r &d&lCleanPulse v2.0.0 &8&m-----------------"));
+        sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp monitor &7- Advanced Root-Cause & Subsystem AI Monitor"));
         sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp time &7- See remaining time until next automated pulse"));
         sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp gui &7- Open interactive control dashboard"));
         sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp pulse [now] &7- Start 10s countdown pulse (or instant)"));
