@@ -1,6 +1,6 @@
 prefix: "&d&lCleanPulse &8» &f"
 commands:
-  pulse-started: "&eOptimization pulse initiated by &d{issuer}&e."
+  pulse-started: "&e⚡ Optimization pulse initiated by &d{issuer}&e! Countdown started."
   pulse-completed: "&a⚡ Pulse completed! Cleaned &d{count}&a items/entities in &d{time}ms&a."
   inspect-toggled: "&eLag Inspector heatmap &d{state}&e."
   filter-toggled: "&eAuto-Mining Junk Filter is now &d{state}&e."
@@ -25,6 +25,7 @@ commands:
   myfarm-redstone: "&7• Redstone Intensity: &e{redstone}"
 warnings:
   broadcast: "&e⚡ Server optimization pulse in &d{time}s&e! Valuable items are shielded."
+  chat-countdown: "&e⚡ Server pulse in &c&l{time}s&e! &7(Valuable items are shielded)"
   actionbar: "&e⚡ Cleaning in &d{time}s&e..."
   title-main: "&d&lCleanPulse"
   title-sub: "&eOptimizing entities in &c{time}s"

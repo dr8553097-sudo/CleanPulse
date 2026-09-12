@@ -1,6 +1,6 @@
 prefix: "&d&lCleanPulse &8» &f"
 commands:
-  pulse-started: "&ePulse d'optimisation initié par &d{issuer}&e."
+  pulse-started: "&e⚡ Pulse d'optimisation initié par &d{issuer}&e! Compte à rebours lancé."
   pulse-completed: "&a⚡ Pulse terminé! &d{count}&a entités nettoyées en &d{time}ms&a."
   inspect-toggled: "&eInspecteur de lag &d{state}&e."
   filter-toggled: "&eFiltre de minage automatique &d{state}&e."
@@ -25,6 +25,7 @@ commands:
   myfarm-redstone: "&7• Activité Redstone: &e{redstone}"
 warnings:
   broadcast: "&e⚡ Pulse d'optimisation dans &d{time}s&e! Objets précieux protégés."
+  chat-countdown: "&e⚡ Nettoyage dans &c&l{time}s&e! &7(Objets précieux protégés)"
   actionbar: "&e⚡ Nettoyage dans &d{time}s&e..."
   title-main: "&d&lCleanPulse"
   title-sub: "&eOptimisation dans &c{time}s"

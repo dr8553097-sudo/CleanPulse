@@ -35,7 +35,11 @@ public class CleanPulseCommand implements CommandExecutor {
                     sender.sendMessage(plugin.getLang().getComponent("commands.no-permission"));
                     return true;
                 }
-                plugin.getPulseManager().executeOptimizationPulse(sender.getName());
+                if (args.length > 1 && (args[1].equalsIgnoreCase("now") || args[1].equalsIgnoreCase("instant"))) {
+                    plugin.getPulseManager().executeOptimizationPulse(sender.getName());
+                } else {
+                    plugin.getPulseManager().initiatePulseSequence(sender.getName());
+                }
                 break;
 
             case "gui":
@@ -138,7 +142,7 @@ public class CleanPulseCommand implements CommandExecutor {
     private void sendHelp(CommandSender sender) {
         sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&8&m-----------------&r &d&lCleanPulse v2.0.0 &8&m-----------------"));
         sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp gui &7- Open interactive control dashboard"));
-        sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp pulse &7- Instant zero-loss optimization pulse"));
+        sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp pulse [now] &7- Start 10s countdown pulse (or instant)"));
         sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp blame &7- Instant diagnostic of top lag hot-spots"));
         sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp restore [player|all] &7- Restore items from recovery buffer"));
         sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp myfarm &7- Check entity health of your current zone"));

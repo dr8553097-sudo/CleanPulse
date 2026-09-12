@@ -7,20 +7,18 @@ import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Tameable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Duration;
 import java.util.List;
 
 public class PulseManager {
     private final CleanPulse plugin;
-    private int currentCountdown = -1;
+    private BukkitTask countdownTask = null;
     private int taskScheduleId = -1;
 
     public PulseManager(CleanPulse plugin) {
@@ -41,30 +39,33 @@ public class PulseManager {
             double currentTps = Bukkit.getTPS()[0];
 
             if (!onLowTps || currentTps <= threshold) {
-                initiatePulseSequence("System-Timer");
+                initiatePulseSequence("System-AutoPulse");
             }
         }, interval * 20L, interval * 20L);
     }
 
     public void initiatePulseSequence(String issuer) {
-        if (currentCountdown > 0) return;
-        currentCountdown = 10;
+        if (countdownTask != null && !countdownTask.isCancelled()) {
+            return; // Already running a countdown
+        }
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+        String startMsg = plugin.getLang().getPrefixed("commands.pulse-started").replace("{issuer}", issuer);
+        Bukkit.broadcast(LegacyComponentSerializer.legacyAmpersand().deserialize(startMsg));
+
+        countdownTask = Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() {
             int timer = 10;
 
             @Override
             public void run() {
                 if (timer > 0) {
-                    List<Integer> alerts = plugin.getConfig().getIntegerList("pulse.announcements.countdown-seconds");
-                    if (alerts.contains(timer)) {
-                        broadcastCountdown(timer);
-                    }
+                    broadcastCountdown(timer);
                     timer--;
                 } else {
+                    if (countdownTask != null) {
+                        countdownTask.cancel();
+                        countdownTask = null;
+                    }
                     executeOptimizationPulse(issuer);
-                    currentCountdown = -1;
-                    throw new RuntimeException("DONE_PULSE");
                 }
             }
         }, 0L, 20L);
@@ -72,15 +73,27 @@ public class PulseManager {
 
     public void broadcastCountdown(int seconds) {
         float pitch = 0.8f + (10 - seconds) * 0.12f;
+
+        // 1. On-Screen Title
         Title title = Title.title(
                 plugin.getLang().getRawComponent("warnings.title-main"),
-                LegacyComponentSerializer.legacyAmpersand().deserialize(plugin.getLang().getRaw("warnings.title-sub").replace("{time}", String.valueOf(seconds))),
+                LegacyComponentSerializer.legacyAmpersand().deserialize(
+                        plugin.getLang().getRaw("warnings.title-sub").replace("{time}", String.valueOf(seconds))
+                ),
                 Title.Times.times(Duration.ofMillis(100), Duration.ofMillis(600), Duration.ofMillis(300))
         );
+
+        // 2. Chat Countdown Message
+        String chatMsg = plugin.getLang().getPrefixed("warnings.chat-countdown")
+                .replace("{time}", String.valueOf(seconds));
+        Component chatComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(chatMsg);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (plugin.getConfig().getBoolean("pulse.announcements.title-warnings", true)) {
                 player.showTitle(title);
+            }
+            if (plugin.getConfig().getBoolean("pulse.announcements.chat-broadcast", true)) {
+                player.sendMessage(chatComponent);
             }
             if (plugin.getConfig().getBoolean("pulse.announcements.sound-effects", true)) {
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, pitch);
@@ -113,7 +126,9 @@ public class PulseManager {
 
         Title finalTitle = Title.title(
                 plugin.getLang().getRawComponent("warnings.title-done-main"),
-                LegacyComponentSerializer.legacyAmpersand().deserialize(plugin.getLang().getRaw("warnings.title-done-sub").replace("{count}", String.valueOf(purged))),
+                LegacyComponentSerializer.legacyAmpersand().deserialize(
+                        plugin.getLang().getRaw("warnings.title-done-sub").replace("{count}", String.valueOf(purged))
+                ),
                 Title.Times.times(Duration.ofMillis(200), Duration.ofMillis(1500), Duration.ofMillis(500))
         );
 
