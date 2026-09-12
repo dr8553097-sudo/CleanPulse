@@ -3,28 +3,24 @@
 # Developed with Next-Gen Intelligence by Dafealru
 # =========================================================
 
-# Language setting: en (English), es (Spanish), fr (French), pt (Portuguese)
 language: "en"
 
-# General Optimization Pulse Settings
+# General Automated Optimization Pulse Settings
 pulse:
   auto-pulse:
     enabled: true
-    interval-seconds: 300
-    tps-threshold: 19.0
-    auto-trigger-on-low-tps: true
+    interval-seconds: 300 # Default: 5 minutes (300 seconds)
+    emergency-tps-threshold: 16.0 # Emergency pulse if TPS drops below this
   
   announcements:
     chat-broadcast: true
     actionbar-warnings: true
     title-warnings: true
-    countdown-seconds: [60, 30, 15, 10, 5, 4, 3, 2, 1]
     sound-effects: true
 
 # Zero-Loss Item Rarity Shield (Never lose valuables)
 rarity-shield:
   enabled: true
-  # Items that will NEVER be purged under any circumstances
   immune-materials:
     - NETHERITE_SWORD
     - NETHERITE_PICKAXE
@@ -71,7 +67,6 @@ rarity-shield:
     - BEACON
     - TRIDENT
     - ENCHANTED_BOOK
-  # Junk items purged with high priority
   junk-materials:
     - ARROW
     - SPECTRAL_ARROW
@@ -90,7 +85,6 @@ rarity-shield:
     - STRING
     - STICK
 
-# Smart Mob Hibernation & Staggering
 mob-hibernation:
   enabled: true
   scan-interval-seconds: 10
@@ -101,21 +95,18 @@ mob-hibernation:
   protect-bosses: true
   protect-villagers: true
 
-# Holographic Item Stacking
 item-stacker:
   enabled: true
   merge-radius: 4.0
   display-hologram: true
   hologram-format: "&d✦ &f[x{amount}] &b{name}"
 
-# Redstone Sentinel (Micro-Breaker for runaway clocks)
 redstone-sentinel:
   enabled: true
   max-frequency-hz: 14
   auto-freeze: true
   particle-cue: true
 
-# Dynamic Simulation Distance Scaler
 simulation-scaler:
   enabled: true
   check-interval-seconds: 30
@@ -124,29 +115,24 @@ simulation-scaler:
   scale-down-tps: 18.0
   scale-up-tps: 19.8
 
-# Lag Undo / Recovery Buffer
 lag-recovery:
   enabled: true
   buffer-duration-minutes: 10
   max-saved-items: 5000
 
-# Villager POI Optimizer
 villager-optimizer:
   enabled: true
   optimize-enclosed: true
 
-# Hopper Deep-Sleep Suppressor
 hopper-suppressor:
   enabled: true
   sleep-empty-ticks: 40
 
-# Death Grace Shield
 death-shield:
   enabled: true
   duration-seconds: 300
   hologram-label: "&b🛡 &fDeath Shield &7({time}s)"
 
-# Auto-Mining Junk Filter
 mining-filter:
   enabled: true
   default-materials:

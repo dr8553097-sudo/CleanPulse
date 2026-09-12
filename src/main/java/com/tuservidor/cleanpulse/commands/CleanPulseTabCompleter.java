@@ -16,7 +16,7 @@ public class CleanPulseTabCompleter implements TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (args.length == 1) {
-            List<String> subs = Arrays.asList("gui", "pulse", "blame", "myfarm", "restore", "filter", "death", "reload", "lang");
+            List<String> subs = Arrays.asList("time", "gui", "pulse", "blame", "myfarm", "restore", "filter", "death", "reload", "lang");
             List<String> res = new ArrayList<>();
             for (String s : subs) {
                 if (s.startsWith(args[0].toLowerCase())) res.add(s);
@@ -32,6 +32,8 @@ public class CleanPulseTabCompleter implements TabCompleter {
                     list.add(p.getName());
                 }
                 return list;
+            } else if (args[0].equalsIgnoreCase("pulse")) {
+                return Arrays.asList("now");
             }
         }
         return List.of();

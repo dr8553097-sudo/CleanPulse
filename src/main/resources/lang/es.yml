@@ -2,6 +2,7 @@ prefix: "&d&lCleanPulse &8» &f"
 commands:
   pulse-started: "&e⚡ ¡Pulso de optimización iniciado por &d{issuer}&e! Cuenta regresiva iniciada."
   pulse-completed: "&a⚡ ¡Pulso completado! Se limpiaron &d{count}&a entidades/items en &d{time}ms&a."
+  pulse-time: "&eSiguiente pulso de optimización automático en: &d{time}&e."
   inspect-toggled: "&eMapa de calor del Inspector de Lag &d{state}&e."
   filter-toggled: "&eFiltro de basura al minar ahora está &d{state}&e."
   no-permission: "&cNo tienes permisos para ejecutar este comando."
@@ -24,7 +25,7 @@ commands:
   myfarm-tiles: "&7• Bloques con Inventario (Tolvas/Cofres): &e{tiles}"
   myfarm-redstone: "&7• Intensidad de Redstone: &e{redstone}"
 warnings:
-  broadcast: "&e⚡ ¡Pulso de optimización en &d{time}s&e! Objetos valiosos protegidos."
+  broadcast: "&e⚡ ¡Pulso de optimización automático en &d{time}s&e! &7(Objetos valiosos protegidos)"
   chat-countdown: "&e⚡ ¡Pulso de limpieza en &c&l{time}s&e! &7(Objetos valiosos protegidos)"
   actionbar: "&e⚡ Limpieza en &d{time}s&e..."
   title-main: "&d&lCleanPulse"

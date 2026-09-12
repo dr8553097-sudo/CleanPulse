@@ -14,12 +14,12 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Duration;
-import java.util.List;
 
 public class PulseManager {
     private final CleanPulse plugin;
-    private BukkitTask countdownTask = null;
-    private int taskScheduleId = -1;
+    private BukkitTask mainAutoTask = null;
+    private int remainingSeconds = 300;
+    private int configuredInterval = 300;
 
     public PulseManager(CleanPulse plugin) {
         this.plugin = plugin;
@@ -27,54 +27,53 @@ public class PulseManager {
     }
 
     public void startAutoScheduler() {
-        if (taskScheduleId != -1) {
-            Bukkit.getScheduler().cancelTask(taskScheduleId);
+        if (mainAutoTask != null) {
+            mainAutoTask.cancel();
+            mainAutoTask = null;
         }
+
         if (!plugin.getConfig().getBoolean("pulse.auto-pulse.enabled", true)) return;
 
-        int interval = plugin.getConfig().getInt("pulse.auto-pulse.interval-seconds", 300);
-        taskScheduleId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-            double threshold = plugin.getConfig().getDouble("pulse.auto-pulse.tps-threshold", 19.0);
-            boolean onLowTps = plugin.getConfig().getBoolean("pulse.auto-pulse.auto-trigger-on-low-tps", true);
-            double currentTps = Bukkit.getTPS()[0];
+        this.configuredInterval = plugin.getConfig().getInt("pulse.auto-pulse.interval-seconds", 300);
+        this.remainingSeconds = this.configuredInterval;
 
-            if (!onLowTps || currentTps <= threshold) {
-                initiatePulseSequence("System-AutoPulse");
+        mainAutoTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            remainingSeconds--;
+
+            // Warnings at 60s and 30s
+            if (remainingSeconds == 60 || remainingSeconds == 30) {
+                if (plugin.getConfig().getBoolean("pulse.announcements.chat-broadcast", true)) {
+                    String msg = plugin.getLang().getPrefixed("warnings.broadcast")
+                            .replace("{time}", String.valueOf(remainingSeconds));
+                    Bukkit.broadcast(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));
+                }
             }
-        }, interval * 20L, interval * 20L);
+
+            // 10s down to 1s: Full Real-Time Chat & Title Countdown with Rising Sound Note
+            if (remainingSeconds <= 10 && remainingSeconds >= 1) {
+                broadcastCountdown(remainingSeconds);
+            }
+
+            // 0s: Execute Pulse and Reset Timer
+            if (remainingSeconds <= 0) {
+                executeOptimizationPulse("Auto-Timer");
+                remainingSeconds = configuredInterval;
+            }
+        }, 20L, 20L);
     }
 
     public void initiatePulseSequence(String issuer) {
-        if (countdownTask != null && !countdownTask.isCancelled()) {
-            return; // Already running a countdown
-        }
-
+        // Jump timer directly to 10s to start the instant countdown
+        this.remainingSeconds = 10;
         String startMsg = plugin.getLang().getPrefixed("commands.pulse-started").replace("{issuer}", issuer);
         Bukkit.broadcast(LegacyComponentSerializer.legacyAmpersand().deserialize(startMsg));
-
-        countdownTask = Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() {
-            int timer = 10;
-
-            @Override
-            public void run() {
-                if (timer > 0) {
-                    broadcastCountdown(timer);
-                    timer--;
-                } else {
-                    if (countdownTask != null) {
-                        countdownTask.cancel();
-                        countdownTask = null;
-                    }
-                    executeOptimizationPulse(issuer);
-                }
-            }
-        }, 0L, 20L);
+        broadcastCountdown(10);
     }
 
     public void broadcastCountdown(int seconds) {
         float pitch = 0.8f + (10 - seconds) * 0.12f;
 
-        // 1. On-Screen Title
+        // 1. Center Title
         Title title = Title.title(
                 plugin.getLang().getRawComponent("warnings.title-main"),
                 LegacyComponentSerializer.legacyAmpersand().deserialize(
@@ -83,7 +82,7 @@ public class PulseManager {
                 Title.Times.times(Duration.ofMillis(100), Duration.ofMillis(600), Duration.ofMillis(300))
         );
 
-        // 2. Chat Countdown Message
+        // 2. Chat Countdown
         String chatMsg = plugin.getLang().getPrefixed("warnings.chat-countdown")
                 .replace("{time}", String.valueOf(seconds));
         Component chatComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(chatMsg);
@@ -143,5 +142,18 @@ public class PulseManager {
         Bukkit.broadcast(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));
 
         return purged;
+    }
+
+    public String getFormattedRemainingTime() {
+        int m = remainingSeconds / 60;
+        int s = remainingSeconds % 60;
+        if (m > 0) {
+            return m + "m " + s + "s";
+        }
+        return s + "s";
+    }
+
+    public int getRemainingSeconds() {
+        return remainingSeconds;
     }
 }

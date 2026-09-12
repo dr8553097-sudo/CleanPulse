@@ -42,6 +42,12 @@ public class CleanPulseCommand implements CommandExecutor {
                 }
                 break;
 
+            case "time":
+                String timeStr = plugin.getPulseManager().getFormattedRemainingTime();
+                sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(
+                        plugin.getLang().getPrefixed("commands.pulse-time").replace("{time}", timeStr)));
+                break;
+
             case "gui":
                 if (!(sender instanceof Player p)) {
                     sender.sendMessage(plugin.getLang().getComponent("commands.only-players"));
@@ -141,6 +147,7 @@ public class CleanPulseCommand implements CommandExecutor {
 
     private void sendHelp(CommandSender sender) {
         sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&8&m-----------------&r &d&lCleanPulse v2.0.0 &8&m-----------------"));
+        sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp time &7- See remaining time until next automated pulse"));
         sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp gui &7- Open interactive control dashboard"));
         sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp pulse [now] &7- Start 10s countdown pulse (or instant)"));
         sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&7• &d/cp blame &7- Instant diagnostic of top lag hot-spots"));
