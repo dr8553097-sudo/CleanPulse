@@ -40,16 +40,12 @@ public class PulseManager {
         mainAutoTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             remainingSeconds--;
 
-            // Warnings at 60s and 30s
+            // Warnings at 60s and 30s with Chat, Action Bar, and Bell chime Sound
             if (remainingSeconds == 60 || remainingSeconds == 30) {
-                if (plugin.getConfig().getBoolean("pulse.announcements.chat-broadcast", true)) {
-                    String msg = plugin.getLang().getPrefixed("warnings.broadcast")
-                            .replace("{time}", String.valueOf(remainingSeconds));
-                    Bukkit.broadcast(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));
-                }
+                broadcastWarning(remainingSeconds);
             }
 
-            // 10s down to 1s: Full Real-Time Chat & Title Countdown with Rising Sound Note
+            // 10s down to 1s: Full Real-Time Chat, Action Bar & Title Countdown with Rising Sound Note
             if (remainingSeconds <= 10 && remainingSeconds >= 1) {
                 broadcastCountdown(remainingSeconds);
             }
@@ -62,8 +58,29 @@ public class PulseManager {
         }, 20L, 20L);
     }
 
+    public void broadcastWarning(int seconds) {
+        String chatMsg = plugin.getLang().getPrefixed("warnings.broadcast")
+                .replace("{time}", String.valueOf(seconds));
+        Component chatComp = LegacyComponentSerializer.legacyAmpersand().deserialize(chatMsg);
+
+        String actionMsg = plugin.getLang().getRaw("warnings.actionbar")
+                .replace("{time}", String.valueOf(seconds));
+        Component actionComp = LegacyComponentSerializer.legacyAmpersand().deserialize(actionMsg);
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (plugin.getConfig().getBoolean("pulse.announcements.chat-broadcast", true)) {
+                player.sendMessage(chatComp);
+            }
+            if (plugin.getConfig().getBoolean("pulse.announcements.actionbar-warnings", true)) {
+                player.sendActionBar(actionComp);
+            }
+            if (plugin.getConfig().getBoolean("pulse.announcements.sound-effects", true)) {
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.0f);
+            }
+        }
+    }
+
     public void initiatePulseSequence(String issuer) {
-        // Jump timer directly to 10s to start the instant countdown
         this.remainingSeconds = 10;
         String startMsg = plugin.getLang().getPrefixed("commands.pulse-started").replace("{issuer}", issuer);
         Bukkit.broadcast(LegacyComponentSerializer.legacyAmpersand().deserialize(startMsg));
@@ -87,12 +104,20 @@ public class PulseManager {
                 .replace("{time}", String.valueOf(seconds));
         Component chatComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(chatMsg);
 
+        // 3. Action Bar Countdown
+        String actionMsg = plugin.getLang().getRaw("warnings.actionbar")
+                .replace("{time}", String.valueOf(seconds));
+        Component actionComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(actionMsg);
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (plugin.getConfig().getBoolean("pulse.announcements.title-warnings", true)) {
                 player.showTitle(title);
             }
             if (plugin.getConfig().getBoolean("pulse.announcements.chat-broadcast", true)) {
                 player.sendMessage(chatComponent);
+            }
+            if (plugin.getConfig().getBoolean("pulse.announcements.actionbar-warnings", true)) {
+                player.sendActionBar(actionComponent);
             }
             if (plugin.getConfig().getBoolean("pulse.announcements.sound-effects", true)) {
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, pitch);

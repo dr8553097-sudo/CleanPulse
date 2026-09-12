@@ -25,9 +25,9 @@ commands:
   myfarm-tiles: "&7• Tile Entities (Hoppers/Chests): &e{tiles}"
   myfarm-redstone: "&7• Redstone Intensity: &e{redstone}"
 warnings:
-  broadcast: "&e⚡ Automated server pulse in &d{time}s&e! &7(Valuable items are shielded)"
+  broadcast: "&e⚡ Automated server pulse in &d&l{time}s&e! &7(Valuable items are shielded)"
   chat-countdown: "&e⚡ Server pulse in &c&l{time}s&e! &7(Valuable items are shielded)"
-  actionbar: "&e⚡ Cleaning in &d{time}s&e..."
+  actionbar: "&e⚡ Server Pulse in &d&l{time}s&e! &7(Valuables Protected)"
   title-main: "&d&lCleanPulse"
   title-sub: "&eOptimizing entities in &c{time}s"
   title-done-main: "&a&l⚡ OPTIMIZED"

@@ -25,9 +25,9 @@ commands:
   myfarm-tiles: "&7• Bloques con Inventario (Tolvas/Cofres): &e{tiles}"
   myfarm-redstone: "&7• Intensidad de Redstone: &e{redstone}"
 warnings:
-  broadcast: "&e⚡ ¡Pulso de optimización automático en &d{time}s&e! &7(Objetos valiosos protegidos)"
+  broadcast: "&e⚡ ¡Pulso de optimización automático en &d&l{time}s&e! &7(Objetos valiosos protegidos)"
   chat-countdown: "&e⚡ ¡Pulso de limpieza en &c&l{time}s&e! &7(Objetos valiosos protegidos)"
-  actionbar: "&e⚡ Limpieza en &d{time}s&e..."
+  actionbar: "&e⚡ ¡Pulso de Limpieza en &d&l{time}s&e! &7(Objetos Protegidos)"
   title-main: "&d&lCleanPulse"
   title-sub: "&eOptimizando entidades en &c{time}s"
   title-done-main: "&a&l⚡ OPTIMIZADO"

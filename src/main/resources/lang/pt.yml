@@ -25,9 +25,9 @@ commands:
   myfarm-tiles: "&7• Funis/Baús: &e{tiles}"
   myfarm-redstone: "&7• Intensidade de Redstone: &e{redstone}"
 warnings:
-  broadcast: "&e⚡ Pulso de otimização automático em &d{time}s&e! &7(Itens valiosos protegidos)"
+  broadcast: "&e⚡ Pulso de otimização automático em &d&l{time}s&e! &7(Itens valiosos protegidos)"
   chat-countdown: "&e⚡ Limpeza em &c&l{time}s&e! &7(Itens valiosos protegidos)"
-  actionbar: "&e⚡ Limpeza em &d{time}s&e..."
+  actionbar: "&e⚡ Limpeza em &d&l{time}s&e! &7(Itens Protegidos)"
   title-main: "&d&lCleanPulse"
   title-sub: "&eOtimizando em &c{time}s"
   title-done-main: "&a&l⚡ OTIMIZADO"
